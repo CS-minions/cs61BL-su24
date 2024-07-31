@@ -1,7 +1,6 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 /* An src.AmoebaFamily is a tree, where nodes are Amoebas, each of which can have
    any number of children. */
@@ -35,12 +34,15 @@ public class AmoebaFamily implements Iterable<AmoebaFamily.Amoeba> {
     /* Returns the longest name in this src.AmoebaFamily. */
     public String longestName() {
         // TODO: YOUR CODE HERE
+        if (root != null) {
+            return root.longestNameHelper();
+        }
         return "";
     }
 
     /* Returns an Iterator for this src.AmoebaFamily. */
     public Iterator<Amoeba> iterator() {
-        return new AmoebaDFSIterator();
+        return new AmoebaBFSIterator();
     }
 
     /* Creates a new src.AmoebaFamily and prints it out. */
@@ -59,7 +61,12 @@ public class AmoebaFamily implements Iterable<AmoebaFamily.Amoeba> {
         family.addChild("Marge", "Bill");
         family.addChild("Marge", "Hilary");
         System.out.println("Here's the family!");
-        // Optional TODO: use the iterator to print out the family!
+        System.out.println("Here's the family in DFS order:");
+        Iterator<Amoeba> iterator = family.iterator();
+        while (iterator.hasNext()) {
+            Amoeba amoeba = iterator.next();
+            System.out.println(amoeba);  // 这里调用的是 Amoeba 的 toString 方法
+        }
     }
 
     /* An Amoeba is a node of an src.AmoebaFamily. */
@@ -105,9 +112,21 @@ public class AmoebaFamily implements Iterable<AmoebaFamily.Amoeba> {
             int maxLengthSeen = name.length();
             for (Amoeba a : children) {
                 maxLengthSeen = Math.max(maxLengthSeen,
-                                         a.longestNameLengthHelper());
+                        a.longestNameLengthHelper());
             }
             return maxLengthSeen;
+        }
+
+        public String longestNameHelper() {
+            String longestName = name;
+            for (Amoeba a : children) {
+                longestName = a.longestNameHelper();
+                if (a.name.length() > longestName.length()) {
+                    longestName = a.name;
+                }
+
+            }
+            return longestName;
         }
 
         // POSSIBLE HELPER FUNCTIONS HERE
@@ -123,17 +142,32 @@ public class AmoebaFamily implements Iterable<AmoebaFamily.Amoeba> {
 
         /* AmoebaDFSIterator constructor. Sets up all of the initial information
            for the AmoebaDFSIterator. */
+        Stack<Amoeba> fringe = new Stack<>();
+
         public AmoebaDFSIterator() {
+            if (root != null) {
+                fringe.push(root);
+            }
         }
 
         /* Returns true if there is a next element to return. */
         public boolean hasNext() {
-            return false;
+            return !fringe.isEmpty();
         }
 
         /* Returns the next element. */
         public Amoeba next() {
-            return null;
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            Amoeba node = fringe.pop();
+            if (!node.children.isEmpty()) {
+                for (int i = node.children.size() - 1; i >= 0; i--) {
+                    fringe.push(node.children.get(i));
+                }
+            }
+            return node;
+
         }
 
         public void remove() {
@@ -150,17 +184,29 @@ public class AmoebaFamily implements Iterable<AmoebaFamily.Amoeba> {
 
         /* AmoebaBFSIterator constructor. Sets up all of the initial information
            for the AmoebaBFSIterator. */
+        Queue<Amoeba> fringe = new LinkedList<>();
         public AmoebaBFSIterator() {
+            if (root != null) {
+                fringe.add(root);
+            }
+
         }
 
         /* Returns true if there is a next element to return. */
         public boolean hasNext() {
-            return false;
+            return !fringe.isEmpty();
         }
 
         /* Returns the next element. */
         public Amoeba next() {
-            return null;
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            Amoeba node = fringe.remove();
+            if (!node.children.isEmpty()) {
+                fringe.addAll(node.children);
+            }
+            return node;
         }
 
         public void remove() {
