@@ -21,8 +21,21 @@ public class GregorianDate extends Date {
 
     @Override
     public Date nextDate() {
-        // TODO
-        return null;
+        int newDay, newMonth, newYear;
+        if(dayOfMonth == getMonthLength(month)) {
+            newDay = 1;
+            newMonth = month + 1;
+        } else {
+            newDay = dayOfMonth + 1;
+            newMonth = month;
+        }
+        if (newMonth == 13) {
+            newMonth = 1;
+            newYear = year + 1;
+        } else {
+            newYear = year;
+        }
+        return new GregorianDate(newYear, newMonth, newDay);
     }
 
     private static int getMonthLength(int m) {

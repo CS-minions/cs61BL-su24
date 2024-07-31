@@ -1,5 +1,5 @@
 /**
- * In a nonleap year for the French Revolutionary Calendar, the first
+ * In a nonleap year for the French Revolutonary Calendar, the first
  * twelve months have 30 days and month 13 has five days.
  */
 public class FrenchRevolutionaryDate extends Date {
