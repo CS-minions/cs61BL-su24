@@ -1,10 +1,12 @@
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * An AList is a list of integers. Like SLList, it also hides the terrible
  * truth of the nakedness within, but uses an array as its base.
  */
-public class AList<Item> {
+public class AList<Item> implements Iterable<Item> {
 
     /* TODO: Make AList able to be iterated over. Add new nested classes as necessary.
     *   Your code will likely not compile on the autograder unless you implement this section.*/
@@ -79,4 +81,22 @@ public class AList<Item> {
         return items;
     }
 
+    @Override
+    public Iterator<Item> iterator() {
+        return new AListIterator();
+    }
+    private class AListIterator implements Iterator<Item> {
+        private int pos = 0;
+        public boolean hasNext() {
+            return pos < size;
+        }
+        public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            int index = pos;
+            pos++;
+            return items[index];
+        }
+    }
 }
