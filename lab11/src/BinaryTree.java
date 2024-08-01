@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import static java.lang.Math.max;
+
 public class BinaryTree<T> {
 
     // Do not modify the TreeNode class.
@@ -158,20 +160,49 @@ public class BinaryTree<T> {
     /* Returns the height of the tree. */
     public int height() {
         // TODO: YOUR CODE HERE
-        return 0;
+       return height(root);
+    }
+    //Helper function of height
+    private int height(TreeNode<T> node) {
+        if (node == null) {
+            return 0;
+        } else {
+            return 1 + max(height(node.left), height(node.right));
+        }
     }
 
     /* Returns true if the tree's left and right children are the same height
        and are themselves completely balanced. */
     public boolean isCompletelyBalanced() {
         // TODO: YOUR CODE HERE
-        return false;
+        return BalancedHelper(root);
     }
-
+    /** Helper function of completelyBalanced*/
+    private boolean BalancedHelper(TreeNode<T> node) {
+        if (node == null) {
+            return true;
+        } else {
+            return height(node.left) == height(node.right) && BalancedHelper(node.left) && BalancedHelper(node.right);
+        }
+    }
     /* Returns a BinaryTree representing the Fibonacci calculation for N. */
     public static BinaryTree<Integer> fibTree(int N) {
         BinaryTree<Integer> result = new BinaryTree<Integer>();
         // TODO: YOUR CODE HERE
-        return null;
+        result.root = fibHelper(N);
+        return result;
+    }
+    private static TreeNode<Integer>  fibHelper(int N ) {
+        if (N == 0) {
+            return new TreeNode<>(0);
+        }
+        else if (N == 1) {
+            return new TreeNode<>(1);
+        }
+        else {
+            TreeNode<Integer> leftchild = fibHelper(N - 1);
+            TreeNode<Integer> rightchild = fibHelper(N - 2);
+            return new TreeNode<Integer>(leftchild.getItem() + rightchild.getItem() , leftchild ,rightchild);
+        }
     }
 }
