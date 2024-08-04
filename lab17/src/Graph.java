@@ -1,9 +1,4 @@
-import java.util.LinkedList;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Stack;
-import java.util.HashSet;
+import java.util.*;
 
 public class Graph implements Iterable<Integer> {
 
@@ -37,6 +32,10 @@ public class Graph implements Iterable<Integer> {
        Hint: you may want to use isAdjacent in this method. */
     public void addEdge(int v1, int v2, int weight) {
         // TODO: YOUR CODE HERE
+        if (isAdjacent(v1, v2)) {
+            adjLists[v1].removeIf(x -> x.to == v2);
+        }
+        adjLists[v1].add(new Edge(v1, v2, weight));
     }
 
     /* Adds an undirected Edge (V1, V2) to the graph with weight WEIGHT. If the
@@ -44,12 +43,19 @@ public class Graph implements Iterable<Integer> {
        weight WEIGHT. */
     public void addUndirectedEdge(int v1, int v2, int weight) {
         // TODO: YOUR CODE HERE
+        addEdge(v1, v2, weight);
+        addEdge(v2, v1, weight);
     }
 
     /* Returns true if there exists an Edge from vertex FROM to vertex TO.
        Returns false otherwise. */
     public boolean isAdjacent(int from, int to) {
         // TODO: YOUR CODE HERE
+        for (Edge x : adjLists[from]) {
+            if (x.to == to) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -57,13 +63,28 @@ public class Graph implements Iterable<Integer> {
        exists in the graph. */
     public List<Integer> neighbors(int v) {
         // TODO: YOUR CODE HERE
-        return null;
+        List<Integer> neighbor = new ArrayList<>();
+        for (Edge x : adjLists[v]){
+            neighbor.add(x.to);
+        }
+        return neighbor;
     }
     /* Returns the number of incoming Edges for vertex V. */
     public int inDegree(int v) {
-        // TODO: YOUR CODE HERE
-        return 0;
+        int inDegreeCount = 0;
+        // 遍历每个顶点的邻接链表
+        for (int i = 0; i < vertexCount; i++) {
+            // 遍历顶点 i 的所有边
+            for (Edge edge : adjLists[i]) {
+                if (edge.to == v) {
+                    // 如果边的终点是 v，则增加 v 的入度
+                    inDegreeCount++;
+                }
+            }
+        }
+        return inDegreeCount;
     }
+
 
     /* Returns an Iterator that outputs the vertices of the graph in topological
        sorted order. */
@@ -142,6 +163,12 @@ public class Graph implements Iterable<Integer> {
        START and STOP are in this graph. If START == STOP, returns true. */
     public boolean pathExists(int start, int stop) {
         // TODO: YOUR CODE HERE
+        if (start == stop) {
+            return true;
+        }
+        if (dfs(start).contains(stop)) {
+            return true;
+        }
         return false;
     }
 
@@ -149,9 +176,40 @@ public class Graph implements Iterable<Integer> {
     /* Returns the path from START to STOP. If no path exists, returns an empty
        List. If START == STOP, returns a List with START. */
     public List<Integer> path(int start, int stop) {
-        // TODO: YOUR CODE HERE
-        return null;
+        if (start == stop) {
+            return Arrays.asList(start);  // Return a list containing just the start vertex.
+        }
+
+        Stack<Integer> stack = new Stack<>();
+        HashMap<Integer, Integer> parent = new HashMap<>();
+        HashSet<Integer> visited = new HashSet<>();
+        stack.push(start);
+
+        while (!stack.isEmpty()) {
+            int current = stack.pop();
+            if (current == stop) {
+                List<Integer> path = new ArrayList<>();
+                while (current != start) {
+                    path.add(current);
+                    current = parent.get(current);
+                }
+                path.add(start);
+                Collections.reverse(path);
+                return path;
+            }
+            if (!visited.contains(current)) {
+                visited.add(current);
+                for (Edge edge : adjLists[current]) {
+                    if (!visited.contains(edge.to)) {
+                        stack.push(edge.to);
+                        parent.put(edge.to, current);
+                    }
+                }
+            }
+        }
+        return new ArrayList<>();  // Return an empty list if no path is found.
     }
+
 
     public List<Integer> topologicalSort() {
         ArrayList<Integer> result = new ArrayList<Integer>();
