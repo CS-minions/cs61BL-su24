@@ -14,22 +14,20 @@ public class QuickSort {
     }
 
     private static int[] partition(int[] arr, int start, int end) {
-        int pivot = arr[start];
-        int i = start + 1;     // Start scanning from the element next to the pivot
-        int lt = start;        // End index of the less-than-pivot section
-        int gt = end;          // Start index of the greater-than-pivot section
+        int pivot =arr[start];
+        int i = start + 1;
+        int lt = start;
+        int gt = end;
 
         while (i < gt) {
             if (arr[i] < pivot) {
-                swap(arr, i++, lt++);  // Increase both indices
+                swap(arr, i ++, lt++);
             } else if (arr[i] > pivot) {
-                swap(arr, i, --gt);  // Decrease only the gt index
+                swap(arr, i, --gt);
             } else {
-                i++;  // Move forward if equal to the pivot
+                i++;
             }
         }
-
-        // Return the boundaries as: [end of less section, start of greater section]
         return new int[]{lt, gt};
     }
 
