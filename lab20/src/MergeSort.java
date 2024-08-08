@@ -13,7 +13,25 @@ public class MergeSort {
      */
     public static int[] sort(int[] arr) {
         // TODO: Implement merge sort
-        return arr;
+        if (arr.length <= 1) {
+            return arr;
+        }
+
+        // Split the array into two halves
+        int mid = arr.length / 2;
+        int[] left = new int[mid];
+        int[] right = new int[arr.length - mid];
+
+        // Copy data to the left and right arrays
+        System.arraycopy(arr, 0, left, 0, mid);
+        System.arraycopy(arr, mid, right, 0, arr.length - mid);
+
+        // Recursively sort each half
+        left = sort(left);
+        right = sort(right);
+
+        // Merge the sorted halves
+        return merge(left, right);
     }
 
     /**
@@ -27,6 +45,27 @@ public class MergeSort {
     private static int[] merge(int[] a, int[] b) {
         int[] c = new int[a.length + b.length];
         // TODO: Implement merge
+        int j = 0;
+        int k = 0;
+        int i = 0;
+        while (i < a.length && j < b.length) {
+            if (a[i] <= b[j]) {
+                c[k++] = a[i++];
+            } else {
+                c[k++] = b[j++];
+            }
+        }
+
+        // Copy remaining elements from a, if any
+        while (i < a.length) {
+            c[k++] = a[i++];
+        }
+
+        // Copy remaining elements from b, if any
+        while (j < b.length) {
+            c[k++] = b[j++];
+        }
+
         return c;
     }
 }
